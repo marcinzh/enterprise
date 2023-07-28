@@ -17,7 +17,7 @@ type MyHttpService = Response !! (Request.Fx & IO)
 ````
 Which should be read as: "Computation, that **returns** `Response` and **requests 2 effects**: `Request.Fx` and `IO`".
 
-`Request.Fx` is a predefined instance of Turbolift's `Reader` effect.
+`Request.Fx` is an instance of Turbolift's `Reader` effect, predefined in Enterprise.
 
 Services can also request other effects than these 2. However, they must be handled (eliminated) by the user, before submitting the service to server. Multiple handlers can be chained, using Turbolift's `&&&!` operator.
 
