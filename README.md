@@ -30,7 +30,7 @@ Examples of such optional effects, predefined in Enterprise, are:
 
 Runnable with `scala-cli`.
 
-### 1. Constant response:
+#### 1. Start with the most basic - constant response:
 
 ```scala
 //> using scala "3.3.0"
@@ -47,7 +47,7 @@ import enterprise.{Response, Server, Config}
   .unsafeRunST
 ```
 
-### 2. Add some routes:
+#### 2. Add some routes:
 
 ```scala
 //> using scala "3.3.0"
@@ -71,7 +71,7 @@ import enterprise.DSL._
   .unsafeRunST
 ```
 
-### 3. Add more routes, and use more effects:
+#### 3. Add more routes, and use more effects:
 ```scala
 //> using scala "3.3.0"
 //> using dep "io.github.marcinzh::enterprise-core:0.1.0"
@@ -79,6 +79,7 @@ import turbolift.Extensions._
 import turbolift.effects.{Random, IO}
 import enterprise.{Request, Response, ErrorResponse, Router, Server, Config}
 import enterprise.model.Status
+import enterprise.headers.UserAgent
 import enterprise.DSL._
 
 def someRoutes = Router:
@@ -91,6 +92,13 @@ def moreRoutes = Router:
       millis <- ErrorResponse.fromOption(millisRaw.toIntOption)(Response(Status.BadRequest))
       _ <- IO(Thread.sleep(millis))
       response = Response()
+    yield response
+
+  case GET / "whoami" =>
+    for
+      headerOpt <- Request.asks(_.headers.get(UserAgent))
+      userAgent <- ErrorResponse.fromOption(headerOpt)(Response(Status.NoContent))
+      response = Response.text(userAgent.value)
     yield response
 
   case GET / "headers" =>
