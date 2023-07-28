@@ -1,5 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3)  [![javadoc](https://javadoc.io/badge2/io.github.marcinzh/enterprise-core_3/javadoc.svg)](https://javadoc.io/doc/io.github.marcinzh/enterprise-core_3)
-# Enterprise 🚀 🪐
+
+# Enterprise <image src="https://github.githubassets.com/images/icons/emoji/unicode/1f680.png"><image src="https://github.githubassets.com/images/icons/emoji/unicode/1fa90.png">
 
 Minimalist library for creating HTTP services, using algebraic effects and handlers.
 
@@ -23,7 +24,7 @@ Services can also request other effects than these 2. However, they must be hand
 
 Examples of such optional effects, predefined in Enterprise, are:
 - `ErrorResponse.Fx`- An instance of Turbolift's `Error` effect. Allows interruption of processing of the request, returning given `Response` value. 
-- `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to of `<|>` of `Alternative`).
+- `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to `<|>` of `Alternative`).
 
 
 ## Examples
