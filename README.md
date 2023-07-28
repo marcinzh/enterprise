@@ -1,13 +1,12 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3)  [![javadoc](https://javadoc.io/badge2/io.github.marcinzh/enterprise-core_3/javadoc.svg)](https://javadoc.io/doc/io.github.marcinzh/enterprise-core_3)
-# Enterprise 🚀
+# Enterprise 🚀 🪐
 
 Minimalist library for creating HTTP services, using algebraic effects and handlers.
-
 
 - ⚗️ 🔬 🧪 &nbsp; 𝑷𝑹𝑶𝑻𝑶𝑻𝒀𝑷𝑬 &nbsp;   🚧 WIP 🚧
 - Uses Scala 3.
 - Uses [Turbolift](https://marcinzh.github.io/turbolift/) as effect system.
-- Adapts parts of design of other purely-functional Http libraries (Http4s, ZIO-Http) for the new effect system.
+- Adapts parts of design of preexisting purely-functional HTTP libraries ([Http4s](https://github.com/http4s/http4s), [ZIO-Http](https://github.com/zio/zio-http)) for the new effect system.
 
 
 ## Design
@@ -16,21 +15,22 @@ Services are defined as values of type:
 ```scala
 type MyHttpService = Response !! (Request.Fx & IO)
 ````
-Which should de read as: "Computation, that returns `Response` and requests 2 effects: `Request.Fx` and `IO`"
+Which should be read as: "Computation, that **returns** `Response` and **requests 2 effects**: `Request.Fx` and `IO`".
 
-`Request.Fx`, is an instance of `Reader` effect from Turbolift.
+`Request.Fx` is a predefined instance of Turbolift's `Reader` effect.
 
-Services can request more effects than those 2, but they must be handled (eliminated) by the user, before submitting the service to server.
-Examples of such predefined effects are:
-- `Router.Fx` - an instance of `Choice` effect from Turbolift.
-- `ErrorResponse.Fx` - an instance of `Error` effect from Turbolift.
+Services can also request other effects than these 2. However, they must be handled (eliminated) by the user, before submitting the service to server. Multiple handlers can be chained, using Turbolift's `&&&!` operator.
 
-
+Examples of such optional effects, predefined in Enterprise, are:
+- `ErrorResponse.Fx`- An instance of Turbolift's `Error` effect. Allows interruption of processing of the request, returning given `Response` value. 
+- `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to of `<|>` of `Alternative`).
 
 
 ## Examples
 
-### 1. Constant response
+Runnable with `scala-cli`.
+
+### 1. Constant response:
 
 ```scala
 //> using scala "3.3.0"
@@ -47,7 +47,7 @@ import enterprise.{Response, Server, Config}
   .unsafeRunST
 ```
 
-### 2. Add some routing
+### 2. Add some routes:
 
 ```scala
 //> using scala "3.3.0"
@@ -71,7 +71,7 @@ import enterprise.DSL._
   .unsafeRunST
 ```
 
-### 2. Add more routes and effects
+### 3. Add more routes, and use more effects:
 ```scala
 //> using scala "3.3.0"
 //> using dep "io.github.marcinzh::enterprise-core:0.1.0"
@@ -79,9 +79,7 @@ import turbolift.Extensions._
 import turbolift.effects.{Random, IO}
 import enterprise.{Request, Response, ErrorResponse, Router, Server, Config}
 import enterprise.model.Status
-import enterprise.headers.UserAgent
 import enterprise.DSL._
-
 
 def someRoutes = Router:
   case POST / "random" => Random.nextInt.map(n => Response.text(n.toString))
