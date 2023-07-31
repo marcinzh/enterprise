@@ -1,6 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.marcinzh/enterprise-core_3)  [![javadoc](https://javadoc.io/badge2/io.github.marcinzh/enterprise-core_3/javadoc.svg)](https://javadoc.io/doc/io.github.marcinzh/enterprise-core_3)
 
-# Enterprise <image src="https://github.githubassets.com/images/icons/emoji/unicode/1f680.png"><image src="https://github.githubassets.com/images/icons/emoji/unicode/1fa90.png">
+# Enterprise <image style="max-height:1.2em" src="https://github.githubassets.com/images/icons/emoji/unicode/1f680.png"><image style="max-height:1.2em" src="https://github.githubassets.com/images/icons/emoji/unicode/1fa90.png">
 
 Minimalist library for creating HTTP services, using algebraic effects and handlers.
 
