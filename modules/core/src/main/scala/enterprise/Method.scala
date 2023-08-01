@@ -1,4 +1,4 @@
-package enterprise.model
+package enterprise
 
 
 enum Method:

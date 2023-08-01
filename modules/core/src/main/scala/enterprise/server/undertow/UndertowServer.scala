@@ -7,14 +7,11 @@ import io.undertow.util.{HeaderMap, HttpString, SameThreadExecutor}
 import turbolift.!!
 import turbolift.Extensions._
 import turbolift.effects.IO
-import enterprise.{Request, Response, Config}
-import enterprise.model._
-import enterprise.headers.All
-import enterprise.server.ServerFunction
-import enterprise.internals.HeaderParser
+import enterprise.{Request, Response, Method, Status, Header, Headers, Body}
+import enterprise.server.{Server, Config}
 
 
-object UndertowServer extends ServerFunction:
+object UndertowServer extends Server.Function:
   override def apply(config: Config, app: Response !! (Request.Fx & IO)): Unit !! IO =
     IO:
       Undertow.builder()
@@ -70,7 +67,7 @@ object UndertowServer extends ServerFunction:
     (for
       a <- hmap.getHeaderNames.iterator.asScala
       b <- hmap.get(a).iterator.asScala
-      h = HeaderParser.parse(a.toString, b)
+      h = Header.parse(a.toString, b)
     yield h)
     .foldLeft(Headers.empty)(_ add _)
 

@@ -1,5 +1,5 @@
 package enterprise.headers
-import enterprise.model.HeaderKey
+import enterprise.HeaderKey
 
 
 val All: IArray[HeaderKey] = IArray(

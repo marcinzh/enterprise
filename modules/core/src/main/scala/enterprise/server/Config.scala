@@ -1,4 +1,4 @@
-package enterprise
+package enterprise.server
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.{Reader, IO}
@@ -7,7 +7,6 @@ import turbolift.effects.{Reader, IO}
 final case class Config(
   port: Int,
   host: String,
-  mode: Mode,
 ):
   def toHandler = Config.Fx.handler(this)
 
@@ -17,12 +16,6 @@ object Config:
   type Fx = Fx.type
   export Fx.{ask, asks}
 
-  def localhost(port: Int): Config = Config(port, "localhost", Mode.Development)
+  def localhost(port: Int): Config = Config(port, "localhost")
   def default = localhost(8080)
   def askHandler: Handler.Free.Id[Fx] !! Fx = Config.ask.map(Config.Fx.handler(_))
-
-
-enum Mode:
-  case Development
-  case Production
-

@@ -1,4 +1,4 @@
-package enterprise.model
+package enterprise
 
 
 final class Headers(val asSeq: Vector[Header], val asMap: Map[HeaderKey, List[Header]]):

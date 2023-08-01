@@ -1,3 +1,3 @@
-package enterprise.model
+package enterprise
 
 export java.nio.charset.Charset

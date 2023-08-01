@@ -1,6 +1,6 @@
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.1.0"
-ThisBuild / scalaVersion := "3.3.0"
+ThisBuild / version := "0.2.0-SNAPSHOT"
+ThisBuild / scalaVersion := "3.3.1"
 ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
 
 ThisBuild / watchBeforeCommand := Watch.clearScreen
@@ -11,21 +11,22 @@ ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
   "-feature",
   "-unchecked",
+  "-Wnonunit-statement",
   "-Xfatal-warnings",
   "-Ykind-projector:underscores",
   Seq(
     "java.lang",
     "scala",
     "scala.Predef",
-    "scala.annotation",
     "scala.util.chaining",
   ).mkString("-Yimports:", ",", "")
 )
 
 val Deps = {
+  val jsonitter_v = "2.23.2"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.2.0" % "test"
-    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.56.0"
+    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.58.1"
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
   }

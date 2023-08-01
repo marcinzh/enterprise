@@ -1,7 +1,7 @@
 package enterprise
 import turbolift.!!
-import enterprise.model.{Body, Status, MediaType, Header, Headers}
 import enterprise.headers.ContentType
+import enterprise.effects.ErrorResponse
 
 
 final case class Response(
@@ -13,7 +13,7 @@ final case class Response(
   def withHeaders(headers: Headers): Response = copy(headers = headers)
   def withBody(body: Body): Response = copy(body = body)
   def withText(text: String): Response = withBody(Body(text), MediaType.TextPlain)
-  def withRawJson(text: String): Response = withBody(Body(text), MediaType.ApplicationJson)
+  def withJsonBody(body: Body): Response = withBody(body, MediaType.ApplicationJson)
   
   def withBody(body: Body, mediaType: MediaType): Response =
     copy(
@@ -39,4 +39,4 @@ object Response:
     )
 
   def text(text: String): Response = apply(Body(text), MediaType.TextPlain)
-  def rawJson(text: String): Response = apply(Body(text), MediaType.ApplicationJson)
+  def jsonBody(body: Body): Response = apply(body, MediaType.ApplicationJson)

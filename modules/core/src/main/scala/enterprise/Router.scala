@@ -2,7 +2,6 @@ package enterprise
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.Choice
-import enterprise.model.Status
 
 
 object Router:

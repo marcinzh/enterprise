@@ -1,5 +1,4 @@
 package enterprise
-import enterprise.model.Method
 
 
 opaque type DSL = DSL./
@@ -17,7 +16,7 @@ object DSL:
       /(method, "")
     else
       val it = path.split('/').iterator
-      it.next()
+      val _ = it.next()
       val dsl = it.foldLeft(method: Method | /)(/(_, _))
       if path.last == '/' then
         /(dsl, "")

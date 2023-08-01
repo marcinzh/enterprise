@@ -1,5 +1,4 @@
-package enterprise.model
-import enterprise.internals.HeaderParser
+package enterprise
 
 
 sealed trait Header:
@@ -20,3 +19,12 @@ object Header:
     override def key: HeaderKey.Unknown = HeaderKey.Unknown
     override def renderKey: String = rawKey
     override def renderValue: String = rawValue
+
+  def tryParse(rawKey: String, rawValue: String): Option[Header] =
+    for
+      key <- HeaderKey.byLowerCase.get(rawKey.toLowerCase)
+      value <- key.tryParseValue(rawValue)
+    yield value
+
+  def parse(rawKey: String, rawValue: String): Header =
+    tryParse(rawKey, rawValue).getOrElse(Unknown(rawKey, rawValue))

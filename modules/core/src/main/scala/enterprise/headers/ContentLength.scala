@@ -1,6 +1,6 @@
 package enterprise.headers
-import enterprise.model.HeaderKey.Companion
-import enterprise.model.Header.Constructor
+import enterprise.HeaderKey.Companion
+import enterprise.Header.Constructor
 
 
 final case class ContentLength(length: Long) extends Constructor[ContentLength](ContentLength):

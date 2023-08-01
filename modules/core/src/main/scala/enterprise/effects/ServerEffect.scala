@@ -2,8 +2,8 @@ package enterprise.effects
 import turbolift.{!!, Signature, Effect, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
-import enterprise.{Request, Response, Config}
-import enterprise.server.ServerFunction
+import enterprise.{Request, Response}
+import enterprise.server.{Server, Config}
 
 
 trait ServerSignature extends Signature:
@@ -13,7 +13,7 @@ trait ServerSignature extends Signature:
 trait ServerEffect extends Effect[ServerSignature] with ServerSignature:
   final override def serve(app: Response !! (Request.Fx & IO)): Unit !! (this.type & Config.Fx) = perform(_.serve(app))
 
-  final def makeHandler(f: ServerFunction): ThisHandler.Id[IO] =
+  final def makeHandler(f: Server.Function): ThisHandler.Id[IO] =
     new Proxy[IO] with ServerSignature:
       override def serve(app: Response !! (Request.Fx & IO)): Unit !@! (ThisEffect & Config.Fx) =
         k =>

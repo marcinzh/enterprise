@@ -2,7 +2,6 @@ package enterprise
 import turbolift.!!
 import turbolift.Extensions._
 import turbolift.effects.Reader
-import enterprise.model._
 
 
 final case class Request(

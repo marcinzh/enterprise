@@ -1,7 +1,7 @@
 package devel
 import turbolift.Extensions._
 import enterprise._
-import enterprise.model._
+import enterprise.server._
 
 
 object App0:

@@ -1,4 +1,4 @@
-package enterprise.model
+package enterprise
 
 
 enum MediaType(val render: String):

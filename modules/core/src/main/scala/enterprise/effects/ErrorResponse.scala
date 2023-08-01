@@ -1,7 +1,8 @@
-package enterprise
+package enterprise.effects
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.Error
+import enterprise.Response
 
 
 object ErrorResponse:

@@ -1,7 +1,7 @@
 package enterprise.headers
-import enterprise.model.HeaderKey.Companion
-import enterprise.model.Header.Constructor
-import enterprise.model.{MediaType, Charset}
+import enterprise.HeaderKey.Companion
+import enterprise.Header.Constructor
+import enterprise.{MediaType, Charset}
 
 
 final case class ContentType(mediaType: MediaType, charset: Option[Charset] = None) extends Constructor[ContentType](ContentType):
