@@ -37,7 +37,7 @@ lazy val root = project
   .in(file("."))
   .settings(sourcesInBase := false)
   .settings(dontPublishMe: _*)
-  .aggregate(core, devel)
+  .aggregate(core, examples)
 
 lazy val core = project
   .in(file("modules/core"))
@@ -48,9 +48,9 @@ lazy val core = project
     Deps.undertow,
   ))
 
-lazy val devel = project
-  .in(file("modules/devel"))
-  .settings(name := "enterprise-devel")
+lazy val examples = project
+  .in(file("modules/examples"))
+  .settings(name := "enterprise-examples")
   .settings(dontPublishMe: _*)
   .dependsOn(core)
 
