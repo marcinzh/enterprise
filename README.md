@@ -20,50 +20,36 @@ Which should be read as: "Computation, that **returns** `Response` and **request
 
 `Request.Fx` is an instance of Turbolift's `Reader` effect, predefined in Enterprise.
 
-Services can also request other effects than these 2. However, they must be handled (eliminated) by the user, before submitting the service to server. Multiple handlers can be chained, using Turbolift's `&&&!` operator.
+Services can also request other effects than these 2. However, they must be handled (eliminated) by the user,
+before submitting the service to server. Multiple handlers can be chained, using Turbolift's `&&&!` operator.
 
 Examples of such optional effects, predefined in Enterprise, are:
 - `ErrorResponse.Fx`- An instance of Turbolift's `Error` effect. Allows interruption of processing of the request, returning given `Response` value. 
 - `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to `<|>` of `Alternative`).
 
+With future version of Turbolift, service will be able to use any number of effects that are handled outside the server scope.
+Each request-response cycle will be able to share those effects.
 
-## Examples
 
-Runnable with `scala-cli`.
+## Example
 
-#### 1. Start with the most basic - constant response:
-
-```scala
-//> using scala "3.3.0"
-//> using dep "io.github.marcinzh::enterprise-core:0.1.0"
-import turbolift.Extensions._
-import enterprise.{Response, Server, Config}
-
-@main def main =
-  Server.serve:
-    Response.text("Live long and prosper").pure_!!
-  .handleWith:
-    Server.undertow &&&!
-    Config.localhost(9000).toHandler
-  .unsafeRunST
-```
-
-#### 2. Add some routes:
+Run the server with `scala-cli`:
 
 ```scala
-//> using scala "3.3.0"
-//> using dep "io.github.marcinzh::enterprise-core:0.1.0"
+//> using scala "3.3.1"
+//> using dep "io.github.marcinzh::enterprise-core:0.2.0"
+import turbolift.!!
 import turbolift.Extensions._
-import enterprise.{Response, Server, Config, Router}
+import enterprise.{Response, Router}
+import enterprise.server.{Server, Config}
 import enterprise.DSL._
 
 @main def main =
   Server.serve:
     Router:
-      case GET / ""            => Response.text("root").pure_!!
-      case GET / "slash"       => Response.text("no trailing").pure_!!
-      case GET / "slash" / ""  => Response.text("trailing").pure_!!
-      case GET / "reverse" / x => Response.text(x.reverse).pure_!!
+      case GET / "sarcastic" / text =>
+        val text2 = text.zipWithIndex.map((c, i) => if i % 2 == 0 then c.toLower else c.toUpper).mkString
+        Response.text(text2).pure_!!
     .handleWith:
       Router.handler
   .handleWith:
@@ -72,53 +58,12 @@ import enterprise.DSL._
   .unsafeRunST
 ```
 
-#### 3. Add more routes, and use more effects:
-```scala
-//> using scala "3.3.0"
-//> using dep "io.github.marcinzh::enterprise-core:0.1.0"
-import turbolift.Extensions._
-import turbolift.effects.{Random, IO}
-import enterprise.{Request, Response, ErrorResponse, Router, Server, Config}
-import enterprise.model.Status
-import enterprise.headers.UserAgent
-import enterprise.DSL._
+Query the server with `httpie`:
 
-def someRoutes = Router:
-  case POST / "random" => Random.nextInt.map(n => Response.text(n.toString))
-  case DELETE / "admin" => Response(Status.Forbidden).pure_!!
-
-def moreRoutes = Router:
-  case POST / "sleep" / millisRaw =>
-    for
-      millis <- ErrorResponse.fromOption(millisRaw.toIntOption)(Response(Status.BadRequest))
-      _ <- IO(Thread.sleep(millis))
-      response = Response()
-    yield response
-
-  case GET / "whoami" =>
-    for
-      headerOpt <- Request.asks(_.headers.get(UserAgent))
-      userAgent <- ErrorResponse.fromOption(headerOpt)(Response(Status.NoContent))
-      response = Response.text(userAgent.value)
-    yield response
-
-  case GET / "headers" =>
-    for
-      hs <- Request.asks(_.headers.asSeq)
-      lines = hs.map(h => s"  ${h.render}").mkString("Request Headers: {\n", "\n", "\n}")
-      response = Response.text(lines)
-    yield response
-
-
-@main def main =
-  Server.serve:
-    (someRoutes ++! moreRoutes)
-    .handleWith:
-      Router.handler &&&!
-      ErrorResponse.handler &&&!
-      Random.handlers.shared
-  .handleWith:
-    Server.undertow &&&!
-    Config.localhost(9000).toHandler
-  .unsafeRunST
+```bash
+http GET http://localhost:9000/sarcastic/assimilate
 ```
+
+---
+
+See [examples folder](./modules/examples/src/main/scala/examples/) for more.

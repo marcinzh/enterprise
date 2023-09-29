@@ -1,5 +1,5 @@
 //> using scala "3.3.1"
-//> using dep "io.github.marcinzh::enterprise-core:0.2.0-SNAPSHOT"
+//> using dep "io.github.marcinzh::enterprise-core:0.2.0"
 package examples
 import turbolift.Extensions._
 import enterprise.{Response, Router, Status}

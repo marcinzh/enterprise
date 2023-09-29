@@ -1,5 +1,5 @@
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.2.0-SNAPSHOT"
+ThisBuild / version := "0.2.0"
 ThisBuild / scalaVersion := "3.3.1"
 ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
 
@@ -29,6 +29,8 @@ val Deps = {
     val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.58.1"
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
+    val jsoniter_core ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % jsonitter_v
+    val jsoniter_macros ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % jsonitter_v
   }
   deps
 }
@@ -46,6 +48,8 @@ lazy val core = project
   .settings(libraryDependencies ++= Seq(
     Deps.turbolift,
     Deps.undertow,
+    Deps.jsoniter_core,
+    Deps.jsoniter_macros,
   ))
 
 lazy val examples = project
