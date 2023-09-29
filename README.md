@@ -28,7 +28,6 @@ Examples of such optional effects, predefined in Enterprise, are:
 - `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to `<|>` of `Alternative`).
 
 With future version of Turbolift, service will be able to use any number of effects that are handled outside the server scope.
-Each request-response cycle will be able to share those effects.
 
 
 ## Example
