@@ -10,7 +10,7 @@ object ErrorResponse:
   type Fx = Fx.type
   export Fx.{raise, catchAll, fromTry, fromOption, fromEither}
 
-  val handler: Handler[[_] =>> Response, [_] =>> Response, Fx, Any] =
+  val handler: Handler.FromConst.ToConst.Free[Response, Response, Fx] =
     Fx.handlers.first
     .project[Response]
-    .map([_] => (e: Either[Response, Response]) => e.merge)
+    .mapK([_] => (e: Either[Response, Response]) => e.merge)

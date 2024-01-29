@@ -7,7 +7,7 @@ import turbolift.effects.Choice
 object Router:
   type Fx = Fx.type
   case object Fx extends Choice
-  export Fx.{fail => empty}
+  export Fx.empty
 
   def apply[U <: Fx & Request.Fx](f: PartialFunction[DSL, Response !! U]): Response !! U =
     Request.asks(r => f.lift(DSL(r))).flatMap:
@@ -17,7 +17,7 @@ object Router:
   def handler[U](notFound: Response !! U): Handler[[_] =>> Response, [_] =>> Response, Fx, U] =
     Fx.handlers.first
     .project[Response]
-    .flatMap([_] => (o: Option[Response]) => o.fold(notFound)(!!.pure))
+    .mapEffK([_] => (o: Option[Response]) => o.fold(notFound)(!!.pure))
 
   val handler: Handler[[_] =>> Response, [_] =>> Response, Fx, Any] = handler(defaultNotFound)
 

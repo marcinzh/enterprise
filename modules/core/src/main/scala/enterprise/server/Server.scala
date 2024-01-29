@@ -12,6 +12,6 @@ object Server:
   type Fx = Fx.type
   export Fx.serve
 
-  def undertow: Fx.ThisHandler.Id[IO] = Fx.makeHandler(UndertowServer)
+  def undertow: Fx.ThisHandler.FromId.ToId[IO] = Fx.makeHandler(UndertowServer)
 
   trait Function extends Function2[Config, Response !! (Request.Fx & IO), Unit !! IO]

@@ -7,6 +7,7 @@ import io.undertow.util.{HeaderMap, HttpString, SameThreadExecutor}
 import turbolift.!!
 import turbolift.Extensions._
 import turbolift.effects.IO
+import turbolift.io.Outcome
 import enterprise.{Request, Response, Method, Status, Header, Headers, Body}
 import enterprise.server.{Server, Config}
 
@@ -32,8 +33,8 @@ object UndertowServer extends Server.Function:
         case Success(req) =>
           app
           .handleWith(Request.Fx.handler(req))
-          .unsafeRunAsync: result =>
-            result match
+          .unsafeRunAsync: outcome =>
+            outcome.toTry match
               case Success(rsp) => writeResponse(exchange, rsp)
               case Failure(e) => writeBadResponse(exchange, "Failed to generate response", e)
             exchange.endExchange()
