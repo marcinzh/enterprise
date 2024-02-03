@@ -70,6 +70,7 @@ ThisBuild / organizationName := "marcinzh"
 ThisBuild / homepage := Some(url("https://github.com/marcinzh/enterprise"))
 ThisBuild / scmInfo := Some(ScmInfo(url("https://github.com/marcinzh/enterprise"), "scm:git@github.com:marcinzh/enterprise.git"))
 ThisBuild / licenses := List("MIT" -> new URL("http://www.opensource.org/licenses/MIT"))
+ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / pomIncludeRepository := { _ => false }
 ThisBuild / publishMavenStyle := true
 ThisBuild / publishTo := {
