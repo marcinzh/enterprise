@@ -26,7 +26,7 @@ val Deps = {
   val jsonitter_v = "2.23.2"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.2.0" % "test"
-    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.71.0-SNAPSHOT"
+    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.72.0"
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
     val jsoniter_core ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % jsonitter_v
@@ -38,7 +38,7 @@ val Deps = {
 lazy val root = project
   .in(file("."))
   .settings(sourcesInBase := false)
-  .settings(dontPublishMe: _*)
+  .settings(publish / skip := true)
   .aggregate(core, examples)
 
 lazy val core = project
@@ -55,7 +55,7 @@ lazy val core = project
 lazy val examples = project
   .in(file("modules/examples"))
   .settings(name := "enterprise-examples")
-  .settings(dontPublishMe: _*)
+  .settings(publish / skip := true)
   .dependsOn(core)
 
 //=================================================
@@ -63,13 +63,6 @@ lazy val examples = project
 lazy val testSettings = Seq(
   libraryDependencies += Deps.specs2_core,
   Test / parallelExecution := false,
-)
-
-lazy val dontPublishMe = Seq(
-  publishTo := None,
-  publish := (()),
-  publishLocal := (()),
-  publishArtifact := false
 )
 
 ThisBuild / description := "Serve HTTP using algebraic effects and handlers"
