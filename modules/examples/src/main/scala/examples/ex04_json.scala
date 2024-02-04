@@ -2,7 +2,6 @@
 //> using dep "io.github.marcinzh::enterprise-core:0.2.0"
 package examples
 import turbolift.Extensions._
-import turbolift.effects.{Reader, IO}
 import enterprise.{Request, Response, Router, Status}
 import enterprise.effects.ErrorResponse
 import enterprise.server.{Server, Config}

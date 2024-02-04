@@ -3,7 +3,6 @@
 package examples
 import turbolift.Extensions._
 import turbolift.effects.{Random, IO}
-import turbolift.Extensions._
 import enterprise.{Request, Response, Router, Status}
 import enterprise.effects.ErrorResponse
 import enterprise.server.{Server, Config}
