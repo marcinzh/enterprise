@@ -7,7 +7,7 @@ import enterprise.server.{Server, Config}
 
 
 @main def ex01 =
-  Server.serve:
+  Server:
     Response.text("Live long and prosper").pure_!!
   .handleWith:
     Server.undertow &&&!

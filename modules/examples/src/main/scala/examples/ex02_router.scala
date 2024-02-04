@@ -8,7 +8,7 @@ import enterprise.DSL._
 
 
 @main def ex02 =
-  Server.serve:
+  Server:
     Router:
       case GET / ""            => Response.text("root").pure_!!
       case GET / "slash"       => Response.text("no trailing").pure_!!

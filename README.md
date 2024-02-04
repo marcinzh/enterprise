@@ -44,7 +44,7 @@ import enterprise.server.{Server, Config}
 import enterprise.DSL._
 
 @main def main =
-  Server.serve:
+  Server:
     Router:
       case GET / "sarcastic" / text =>
         val text2 = text.zipWithIndex.map((c, i) => if i % 2 == 0 then c.toLower else c.toUpper).mkString

@@ -15,7 +15,7 @@ import com.github.plokhotnyuk.jsoniter_scala.core._
   case class Person(name: String, age: Int)
   given codec: JsonValueCodec[Person] = JsonCodecMaker.make
 
-  Server.serve:
+  Server:
     Router:
       case GET / "encode" / name / rawAge =>
         for

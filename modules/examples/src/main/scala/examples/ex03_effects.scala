@@ -36,7 +36,7 @@ def moreRoutes = Router:
 
 
 @main def ex03 =
-  Server.serve:
+  Server:
     (someRoutes ++! moreRoutes)
     .handleWith:
       Router.handler &&&!

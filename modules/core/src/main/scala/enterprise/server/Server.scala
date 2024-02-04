@@ -10,7 +10,7 @@ import enterprise.server.undertow.UndertowServer
 object Server:
   case object Fx extends ServerEffect
   type Fx = Fx.type
-  export Fx.serve
+  export Fx.{serve => apply}
 
   def undertow: Fx.ThisHandler.FromId.ToId[IO] = Fx.makeHandler(UndertowServer)
 
