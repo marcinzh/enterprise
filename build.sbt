@@ -3,10 +3,6 @@ ThisBuild / version := "0.2.0"
 ThisBuild / scalaVersion := "3.3.1"
 ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
 
-ThisBuild / watchBeforeCommand := Watch.clearScreen
-ThisBuild / watchTriggeredMessage := Watch.clearScreenOnTrigger
-ThisBuild / watchForceTriggerOnAnyChange := true
-
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
   "-feature",
@@ -64,6 +60,10 @@ lazy val testSettings = Seq(
   libraryDependencies += Deps.specs2_core,
   Test / parallelExecution := false,
 )
+
+ThisBuild / watchBeforeCommand := Watch.clearScreen
+ThisBuild / watchTriggeredMessage := Watch.clearScreenOnTrigger
+ThisBuild / watchForceTriggerOnAnyChange := true
 
 ThisBuild / description := "Serve HTTP using algebraic effects and handlers"
 ThisBuild / organizationName := "marcinzh"
