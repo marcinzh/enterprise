@@ -14,11 +14,11 @@ object Router:
       case None => empty
       case Some(x) => x
 
-  def handler[U](notFound: Response !! U): Handler[[_] =>> Response, [_] =>> Response, Fx, U] =
+  def handler[U](notFound: Response !! U): Handler.FromConst.ToConst[Response, Response, Fx, U] =
     Fx.handlers.first
     .project[Response]
     .mapEffK([_] => (o: Option[Response]) => o.fold(notFound)(!!.pure))
 
-  val handler: Handler[[_] =>> Response, [_] =>> Response, Fx, Any] = handler(defaultNotFound)
+  val handler: Handler.FromConst.ToConst.Free[Response, Response, Fx] = handler(defaultNotFound)
 
   def defaultNotFound: Response !! Any = Response(Status.NotFound).pure_!!
