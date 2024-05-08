@@ -3,7 +3,7 @@ import scala.reflect.ClassTag
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
 
-object Aux:
+object Auxx:
   extension [A](self: JsonValueCodec[A])
     def transformOrFail[B](tryFrom: B => Option[A], to: A => B)(using ClassTag[A], ClassTag[B]) : JsonValueCodec[B] =
       transform(b => tryFrom(b).getOrElse(throw new DecodingException(s"Transform from ${summon[ClassTag[B]]} to ${summon[ClassTag[A]]}")), to)
