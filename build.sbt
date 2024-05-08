@@ -1,6 +1,6 @@
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.2.0"
-ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / version := "0.3.0"
+ThisBuild / scalaVersion := "3.3.3"
 ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
 
 ThisBuild / scalacOptions ++= Seq(
@@ -22,7 +22,7 @@ val Deps = {
   val jsonitter_v = "2.23.2"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.2.0" % "test"
-    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.72.0"
+    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.78.0"
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
     val jsoniter_core ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % jsonitter_v

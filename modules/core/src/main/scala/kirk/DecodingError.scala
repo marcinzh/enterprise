@@ -12,7 +12,7 @@ object DecodingError:
   case object Fx extends Error[DecodingException]
   type Fx = Fx.type
 
-  def badRequest: Handler.FromConst.ToConst.Free[Response, Response, Fx] =
+  def badRequest: Handler[Const[Response], Const[Response], Fx, Any] =
     Fx.handlers.first
     .project[Response]
     .mapK([_] => (ee: Either[DecodingException, Response]) => ee match

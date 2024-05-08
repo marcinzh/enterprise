@@ -5,7 +5,7 @@ import turbolift.Extensions._
 
 
 extension [R](fx: Reader[R])
-  def lazyReaderHandler[V](acquire: R !! V): fx.ThisHandler.FromId.ToId[V] =
+  def lazyReaderHandler[V](acquire: R !! V): fx.ThisHandler[Identity, Identity, V] =
     case object S extends State[Option[R]]
     type S = S.type
 
@@ -13,7 +13,7 @@ extension [R](fx: Reader[R])
       def getSome: R !! (S & V) =
         S.get.flatMap:
           case Some(r) => r.pure_!!
-          case None => acquire.flatTap(putSome)
+          case None => acquire.tapEff(putSome)
 
       def putSome(r: R): Unit !! S = S.put(Some(r))
 

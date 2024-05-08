@@ -13,7 +13,7 @@ trait ServerSignature extends Signature:
 trait ServerEffect extends Effect[ServerSignature] with ServerSignature:
   final override def serve(app: Response !! (Request.Fx & IO)): Unit !! (this.type & Config.Fx) = perform(_.serve(app))
 
-  final def makeHandler(f: Server.Function): ThisHandler.FromId.ToId[IO] =
+  final def makeHandler(f: Server.Function): ThisHandler[Identity, Identity, IO] =
     new impl.Proxy[IO] with ServerSignature:
       override def serve(app: Response !! (Request.Fx & IO)): Unit !@! (ThisEffect & Config.Fx) =
         for

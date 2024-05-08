@@ -18,4 +18,4 @@ object Config:
 
   def localhost(port: Int): Config = Config(port, "localhost")
   def default = localhost(8080)
-  def askHandler: Handler.FromId.ToId.Free[Fx] !! Fx = Config.ask.map(Config.Fx.handler(_))
+  def askHandler: Handler[Identity, Identity, Fx, Any] !! Fx = Config.ask.map(Config.Fx.handler(_))
