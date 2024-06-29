@@ -1,5 +1,5 @@
 //> using scala "3.3.3"
-//> using dep "io.github.marcinzh::enterprise-core:0.3.0"
+//> using dep "io.github.marcinzh::enterprise-core:0.3.0-SNAPSHOT"
 package examples
 import turbolift.Extensions._
 import turbolift.effects.{Random, IO}
