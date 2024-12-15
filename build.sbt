@@ -1,6 +1,6 @@
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.3.0-SNAPSHOT"
-ThisBuild / scalaVersion := "3.3.3"
+ThisBuild / version := "0.5.0-SNAPSHOT"
+ThisBuild / scalaVersion := "3.3.4"
 ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
 
 ThisBuild / scalacOptions ++= Seq(
@@ -19,10 +19,12 @@ ThisBuild / scalacOptions ++= Seq(
 )
 
 val Deps = {
-  val jsonitter_v = "2.23.2"
+  val jsonitter_v = "2.32.0"
+  val tur_v = "0.102.0"
   object deps {
-    val specs2_core = "org.specs2" %% "specs2-core" % "5.2.0" % "test"
-    val turbolift = "io.github.marcinzh" %% "turbolift-core" % "0.88.0"
+    val specs2_core = "org.specs2" %% "specs2-core" % "5.4.0" % "test"
+    val turbolift_core = "io.github.marcinzh" %% "turbolift-core" % tur_v
+    val turbolift_bindless = "io.github.marcinzh" %% "turbolift-bindless" % tur_v
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
     val jsoniter_core ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % jsonitter_v
@@ -42,7 +44,8 @@ lazy val core = project
   .settings(name := "enterprise-core")
   .settings(testSettings: _*)
   .settings(libraryDependencies ++= Seq(
-    Deps.turbolift,
+    Deps.turbolift_core,
+    Deps.turbolift_bindless,
     Deps.undertow,
     Deps.jsoniter_core,
     Deps.jsoniter_macros,

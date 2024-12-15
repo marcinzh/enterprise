@@ -26,7 +26,7 @@ object HeaderKey:
 
 
   private val RX = "(?<!^)(?=[A-Z][a-z0-9])".r
-  private[this] def prettify(name: String): String =
+  private def prettify(name: String): String =
     RX.split(name).mkString("-")
 
   lazy val byLowerCase: Map[String, HeaderKey] = All.map(hk => hk.render.toLowerCase -> hk).toMap

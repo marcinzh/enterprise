@@ -35,8 +35,8 @@ With future version of Turbolift, service will be able to use any number of effe
 Run the server with `scala-cli`:
 
 ```scala
-//> using scala "3.3.1"
-//> using dep "io.github.marcinzh::enterprise-core:0.2.0"
+//> using scala "3.3.4"
+//> using dep "io.github.marcinzh::enterprise-core:0.5.0-SNAPSHOT"
 import turbolift.!!
 import turbolift.Extensions._
 import enterprise.{Response, Router}

@@ -24,5 +24,5 @@ final class Headers(val asSeq: Vector[Header], val asMap: Map[HeaderKey, List[He
 
 
 object Headers:
-  def apply(headers: Header*): Headers = headers.foldLeft(empty)(_ add _)
+  def apply(headers: Header*): Headers = headers.foldLeft(empty)(_ `add` _)
   def empty: Headers = new Headers(Vector(), Map())

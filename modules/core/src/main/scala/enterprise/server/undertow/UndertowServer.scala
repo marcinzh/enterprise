@@ -70,7 +70,7 @@ object UndertowServer extends Server.Function:
       b <- hmap.get(a).iterator.asScala
       h = Header.parse(a.toString, b)
     yield h)
-    .foldLeft(Headers.empty)(_ add _)
+    .foldLeft(Headers.empty)(_ `add` _)
 
   private def writeHeaders(hmap: HeaderMap, headers: Headers): Unit =
     headers.asSeq.foreach: h =>
