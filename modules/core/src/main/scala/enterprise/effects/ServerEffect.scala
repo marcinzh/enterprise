@@ -7,7 +7,7 @@ import enterprise.server.{Server, Config}
 
 
 trait ServerSignature extends Signature:
-  def serve(app: Response !! (Request.Fx & IO)): Unit !@! (ThisEffect & Config.Fx)
+  def serve(app: Response !! (Request.Fx & IO)): Unit !! (ThisEffect & Config.Fx)
 
 
 trait ServerEffect extends Effect[ServerSignature] with ServerSignature:
@@ -15,7 +15,7 @@ trait ServerEffect extends Effect[ServerSignature] with ServerSignature:
 
   final def makeHandler(f: Server.Function): ThisHandler[Identity, Identity, IO] =
     new impl.Proxy[IO] with ServerSignature:
-      override def serve(app: Response !! (Request.Fx & IO)): Unit !@! (ThisEffect & Config.Fx) =
+      override def serve(app: Response !! (Request.Fx & IO)): Unit !! (ThisEffect & Config.Fx) =
         for
           config <- Config.Fx.ask
           result <- f(config, app)

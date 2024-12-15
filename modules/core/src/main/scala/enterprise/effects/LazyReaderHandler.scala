@@ -17,11 +17,11 @@ extension [R](fx: Reader[R])
 
       def putSome(r: R): Unit !! S = S.put(Some(r))
 
-      override def ask: R !@! ThisEffect = getSome
+      override def ask: R !! ThisEffect = getSome
 
-      override def asks[A](f: R => A): A !@! ThisEffect = ask.map(f)
+      override def asks[A](f: R => A): A !! ThisEffect = ask.map(f)
 
-      override def localModify[A, U <: ThisEffect](f: R => R)(body: A !! U): A !@! U =
+      override def localModify[A, U <: ThisEffect](f: R => R)(body: A !! U): A !! U =
         for
           r <- getSome
           _ <- putSome(f(r))
@@ -29,7 +29,7 @@ extension [R](fx: Reader[R])
           _ <- putSome(r)
         yield a
 
-      override def localPut[A, U <: ThisEffect](r: R)(body: A !! U): A !@! U =
+      override def localPut[A, U <: ThisEffect](r: R)(body: A !! U): A !! U =
         localModify(_ => r)(body)
 
     .toHandler
