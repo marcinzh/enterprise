@@ -3,9 +3,11 @@
 package examples
 import turbolift.bindless._
 import enterprise.{Request, Response, Router, Status}
-import enterprise.server.{Server, Config}
-import enterprise.headers.UserAgent
 import enterprise.DSL._
+import enterprise.headers.UserAgent
+import enterprise.server.Config
+import enterprise.server.Syntax._
+import enterprise.server.undertow.UndertowServer
 
 
 /******************************
@@ -15,26 +17,22 @@ http GET http://localhost:9000/headers
 
 
 @main def ex03_accessingRequest =
-  Server:
-    Router:
-      case GET / "whoami" =>
-        `do`:
-          val request = Request.ask.!
-          request.headers.get(UserAgent) match
-            case Some(userAgent) => Response.text(userAgent.value)
-            case None => Response(Status.NoContent)
+  Router:
+    case GET / "whoami" =>
+      `do`:
+        Request.ask.!.headers.get(UserAgent) match
+          case Some(userAgent) => Response.text(userAgent.value)
+          case None => Response(Status.NoContent)
 
-      case GET / "headers" =>
-        `do`:
-          val headers = Request.ask.!.headers
-          val lines = headers.asSeq.map(h => s"  ${h.render}")
-          val text = lines.mkString("Request Headers: {\n", "\n", "\n}")
-          Response.text(text)
+    case GET / "headers" =>
+      `do`:
+        val headers = Request.ask.!.headers
+        val lines = headers.asSeq.map(h => s"  ${h.render}")
+        val text = lines.mkString("Request Headers: {\n", "\n", "\n}")
+        Response.text(text)
 
-    .handleWith:
-      Router.handler
-  .handleWith:
-    Server.undertow &&&!
-    Config.localhost(9000).toHandler
-  .unsafeRunST
-
+  .handleWith(Router.handler)
+  .serve
+  .handleWith(UndertowServer.toHandler)
+  .handleWith(Config.localhost(9000).toHandler)
+  .runIO

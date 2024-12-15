@@ -20,5 +20,7 @@ object Main:
       example(ex02_composingRoutes),
       example(ex03_accessingRequest),
       example(ex04_localEffects),
-      example(ex05_jsonBody),
+      example(ex05_globalEffects),
+      example(ex06_localAndGlobalEffects),
+      example(ex07_jsonBody),
     )

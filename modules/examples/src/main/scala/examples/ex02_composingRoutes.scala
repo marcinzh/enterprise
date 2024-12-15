@@ -3,8 +3,10 @@
 package examples
 import turbolift.Extensions._
 import enterprise.{Response, Router}
-import enterprise.server.{Server, Config}
 import enterprise.DSL._
+import enterprise.server.Config
+import enterprise.server.Syntax._
+import enterprise.server.undertow.UndertowServer
 
 
 /******************************
@@ -25,11 +27,9 @@ private def myRouter3 = Router:
 
 
 @main def ex02_composingRoutes =
-  Server:
-    (myRouter1 ++! myRouter2 ++! myRouter3)
-    .handleWith:
-      Router.handler
-  .handleWith:
-    Server.undertow &&&!
-    Config.localhost(9000).toHandler
-  .unsafeRunST
+  (myRouter1 ++! myRouter2 ++! myRouter3)
+  .handleWith(Router.handler)
+  .serve
+  .handleWith(UndertowServer.toHandler)
+  .handleWith(Config.localhost(9000).toHandler)
+  .runIO

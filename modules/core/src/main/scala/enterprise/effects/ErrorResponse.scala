@@ -14,3 +14,5 @@ object ErrorResponse:
     Fx.handlers.first
     .project[Response]
     .mapK([_] => (e: Either[Response, Response]) => e.merge)
+
+  def raiseBadRequest(text: String) = raise(Response.badRequest(text))

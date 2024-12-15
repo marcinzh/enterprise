@@ -4,40 +4,42 @@ import scala.util.{Try, Success, Failure}
 import io.undertow.Undertow
 import io.undertow.server.{HttpHandler, HttpServerExchange}
 import io.undertow.util.{HeaderMap, HttpString, SameThreadExecutor}
-import turbolift.!!
+import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
-import turbolift.io.Outcome
-import enterprise.{Request, Response, Method, Status, Header, Headers, Body}
+import turbolift.io.{Outcome, Warp, Loom}
+import enterprise.{Request, Response, Service,  Method, Status, Header, Headers, Body}
 import enterprise.server.{Server, Config}
 
 
-object UndertowServer extends Server.Function:
-  override def apply(config: Config, app: Response !! (Request.Fx & IO)): Unit !! IO =
-    IO:
-      Undertow.builder()
-      .addHttpListener(config.port, config.host)
-      .setHandler(makeHttpHandler(app))
-      .build()
-      .start()
+object UndertowServer extends Server:
+  override def runLoom[U](service: Service[U]): Loom[Unit, U & IO] !! (Config.Fx & IO & Warp) =
+    for
+      config <- Config.Fx.ask
+      loom <- Loom.create[Unit, U & IO]
+      _ <- IO:
+        Undertow.builder()
+        .addHttpListener(config.port, config.host)
+        .setHandler(makeHttpHandler(service, loom))
+        .build()
+        .start()
+    yield loom
 
-  private def makeHttpHandler(app: Response !! (Request.Fx & IO)) =
+  private def makeHttpHandler[U](service: Service[U], loom: Loom[Unit, U & IO]): HttpHandler =
     new HttpHandler:
       override def handleRequest(exchange: HttpServerExchange) =
-        exchange.dispatch(SameThreadExecutor.INSTANCE, () => handleRequestAsync(exchange, app))
+        exchange.dispatch(SameThreadExecutor.INSTANCE, () => handleRequestAsync(exchange, service, loom))
 
-  private def handleRequestAsync(exchange: HttpServerExchange, app: Response !! (Request.Fx & IO)): Unit =
+  private def handleRequestAsync[U](exchange: HttpServerExchange, service: Service[U], loom: Loom[Unit, U & IO]): Unit =
     exchange.getRequestReceiver.receiveFullBytes: (_, bytes) =>
       Try(readRequest(exchange, bytes)) match
         case Failure(e) => writeBadResponse(exchange, "Failed to inspect request", e)
         case Success(req) =>
-          app
-          .handleWith(Request.Fx.handler(req))
-          .unsafeRunAsync: outcome =>
-            outcome.toTry match
+          loom.unsafeSubmit:
+            IO.toTry(service.handleWith(Request.Fx.handler(req))).map:
               case Success(rsp) => writeResponse(exchange, rsp)
               case Failure(e) => writeBadResponse(exchange, "Failed to generate response", e)
-            exchange.endExchange()
+            .guarantee(IO(exchange.endExchange()))
 
   private def readRequest(exchange: HttpServerExchange, body: Array[Byte]): Request =
     Request(

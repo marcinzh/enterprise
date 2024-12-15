@@ -2,16 +2,16 @@ package enterprise.server
 import turbolift.!!
 import turbolift.Extensions._
 import turbolift.effects.IO
-import enterprise.{Request, Response}
+import turbolift.io.{Warp, Loom}
+import enterprise.{Request, Response, Service}
 import enterprise.effects.ServerEffect
-import enterprise.server.undertow.UndertowServer
 
 
-object Server:
-  case object Fx extends ServerEffect
-  type Fx = Fx.type
-  export Fx.{serve => apply}
+trait Server:
+  def runLoom[U](service: Service[U]): Loom[Unit, U & IO] !! (Config.Fx & Warp & IO)
 
-  def undertow: Fx.ThisHandler[Identity, Identity, IO] = Fx.makeHandler(UndertowServer)
+  final def apply[U](service: Service[U]): Unit !! (U & Config.Fx & IO) = run(service)
 
-  trait Function extends Function2[Config, Response !! (Request.Fx & IO), Unit !! IO]
+  final def run[U](service: Service[U]): Unit !! (U & Config.Fx & IO) = runLoom[U](service).flatMap(_.reduceVoid).warp
+
+  final def toHandler = ServerEffect.makeHandler(this)

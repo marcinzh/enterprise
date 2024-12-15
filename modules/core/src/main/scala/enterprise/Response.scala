@@ -40,3 +40,5 @@ object Response:
 
   def text(text: String): Response = apply(Body(text), MediaType.TextPlain)
   def jsonBody(body: Body): Response = apply(body, MediaType.ApplicationJson)
+
+  def badRequest(text: String): Response = apply(Status.BadRequest, Body(text))

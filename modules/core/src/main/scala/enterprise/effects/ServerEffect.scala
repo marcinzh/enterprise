@@ -2,22 +2,18 @@ package enterprise.effects
 import turbolift.{!!, Signature, Effect, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
-import enterprise.{Request, Response}
+import enterprise.{Request, Response, Service}
 import enterprise.server.{Server, Config}
 
 
 trait ServerSignature extends Signature:
-  def serve(app: Response !! (Request.Fx & IO)): Unit !! (ThisEffect & Config.Fx)
+  def serve[U](service: Service[U]): Unit !! (ThisEffect & U)
 
 
-trait ServerEffect extends Effect[ServerSignature] with ServerSignature:
-  final override def serve(app: Response !! (Request.Fx & IO)): Unit !! (this.type & Config.Fx) = perform(_.serve(app))
+case object ServerEffect extends Effect[ServerSignature] with ServerSignature:
+  final override def serve[U](service: Service[U]): Unit !! (this.type & U) = perform(_.serve(service))
 
-  final def makeHandler(f: Server.Function): ThisHandler[Identity, Identity, IO] =
-    new impl.Proxy[IO] with ServerSignature:
-      override def serve(app: Response !! (Request.Fx & IO)): Unit !! (ThisEffect & Config.Fx) =
-        for
-          config <- Config.Fx.ask
-          result <- f(config, app)
-        yield result
+  final def makeHandler(server: Server): ThisHandler[Identity, Identity, Config.Fx & IO] =
+    new impl.Proxy[Config.Fx & IO] with ServerSignature:
+      override def serve[U](service: Service[U]): Unit !! (ThisEffect & U) = server.run(service)
     .toHandler

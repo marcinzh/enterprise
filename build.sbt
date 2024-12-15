@@ -20,7 +20,7 @@ ThisBuild / scalacOptions ++= Seq(
 
 val Deps = {
   val jsonitter_v = "2.32.0"
-  val tur_v = "0.102.0"
+  val tur_v = "0.104.0"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.4.0" % "test"
     val turbolift_core = "io.github.marcinzh" %% "turbolift-core" % tur_v
