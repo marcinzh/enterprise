@@ -6,7 +6,12 @@ import enterprise.Response
 import enterprise.server.{Server, Config}
 
 
-@main def ex01 =
+/******************************
+http GET http://localhost:9000
+******************************/
+
+
+@main def ex00_constantResponse =
   Server:
     Response.text("Live long and prosper").pure_!!
   .handleWith:

@@ -7,7 +7,13 @@ import enterprise.server.{Server, Config}
 import enterprise.DSL._
 
 
-@main def ex02 =
+/******************************
+http GET http://localhost:9000/reverse/hello
+http DELETE http://localhost:9000/admin
+******************************/
+
+
+@main def ex01_basicRouter =
   Server:
     Router:
       case GET / ""            => Response.text("root").pure_!!

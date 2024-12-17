@@ -55,6 +55,7 @@ lazy val examples = project
   .in(file("modules/examples"))
   .settings(name := "enterprise-examples")
   .settings(publish / skip := true)
+  .settings(Compile / run / mainClass := Some("runner.Main"))
   .dependsOn(core)
 
 //=================================================
