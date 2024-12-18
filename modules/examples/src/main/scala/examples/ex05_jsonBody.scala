@@ -1,7 +1,7 @@
 //> using scala "3.3.4"
 //> using dep "io.github.marcinzh::enterprise-core:0.5.0-SNAPSHOT"
 package examples
-import turbolift.!!
+import turbolift.bindless._
 import enterprise.{Request, Response, Router, Status}
 import enterprise.effects.ErrorResponse
 import enterprise.server.{Server, Config}
@@ -25,18 +25,17 @@ http GET http://localhost:9000/decode name=Adam age:=42
     Router:
       case GET / "encode" / name / rawAge =>
         def invalidAge(cause: String) = Response(Status.BadRequest).withText(s"Invalid age: `$rawAge`. Cause: $cause.")
-        for
-          age <- ErrorResponse.fromOption(rawAge.toIntOption)(invalidAge("not an integer"))
-          _ <- !!.when(age < 0)(ErrorResponse.raise(invalidAge("must not be negative")))
-          person = Person(name, age)
-          response = Response.json(person)
-        yield response
+        `do`:
+          val age = ErrorResponse.fromOption(rawAge.toIntOption)(invalidAge("not an integer")).!
+          if age < 0 then ErrorResponse.raise(invalidAge("must not be negative")).!
+          val person = Person(name, age)
+          Response.json(person)
 
       case GET / "decode" =>
-        for
-          person <- Request.asks(_.body.json[Person]).flatten
-          response = Response.text(s"$person")
-        yield response
+        `do`:
+          val body = Request.ask.!.body
+          val person = body.json[Person].!
+          Response.text(s"$person")
   
     .handleWith:
       Router.handler &&&!
