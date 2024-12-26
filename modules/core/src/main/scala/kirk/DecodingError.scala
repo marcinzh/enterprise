@@ -1,19 +1,18 @@
 package kirk
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
-import turbolift.effects.Error
+import turbolift.effects.ErrorEffect
 import enterprise.{Response, Status}
 
 
 final class DecodingException(message: String) extends Exception(message)
 
 
-object DecodingError:
-  case object Fx extends Error[DecodingException]
-  type Fx = Fx.type
+type DecodingError = DecodingError.type
 
-  def badRequest: Handler[Const[Response], Const[Response], Fx, Any] =
-    Fx.handlers.first
+object DecodingError extends ErrorEffect[DecodingException, DecodingException]:
+  def badRequest: Handler[Const[Response], Const[Response], DecodingError, Any] =
+    handlers.first
     .project[Response]
     .mapK([_] => (ee: Either[DecodingException, Response]) => ee match
       case Right(r) => r

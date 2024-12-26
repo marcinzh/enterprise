@@ -8,14 +8,14 @@ import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
 import turbolift.io.{Outcome, Warp, Loom}
-import enterprise.{Request, Response, Service,  Method, Status, Header, Headers, Body}
-import enterprise.server.{Server, Config}
+import enterprise.{Request, RequestEffect, Response, Service,  Method, Status, Header, Headers, Body}
+import enterprise.server.{Server, Config, ConfigEffect}
 
 
 object UndertowServer extends Server:
-  override def runLoom[U](service: Service[U]): Loom[Unit, U & IO] !! (Config.Fx & IO & Warp) =
+  override def runLoom[U](service: Service[U]): Loom[Unit, U & IO] !! (ConfigEffect & IO & Warp) =
     for
-      config <- Config.Fx.ask
+      config <- ConfigEffect.ask
       loom <- Loom.create[Unit, U & IO]
       _ <- IO:
         Undertow.builder()
@@ -36,7 +36,7 @@ object UndertowServer extends Server:
         case Failure(e) => writeBadResponse(exchange, "Failed to inspect request", e)
         case Success(req) =>
           loom.unsafeSubmit:
-            IO.toTry(service.handleWith(Request.Fx.handler(req))).map:
+            IO.toTry(service.handleWith(RequestEffect.handler(req))).map:
               case Success(rsp) => writeResponse(exchange, rsp)
               case Failure(e) => writeBadResponse(exchange, "Failed to generate response", e)
             .guarantee(IO(exchange.endExchange()))

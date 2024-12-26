@@ -1,7 +1,4 @@
 package enterprise
-import turbolift.!!
-import turbolift.Extensions._
-import turbolift.effects.Reader
 
 
 final case class Request(
@@ -14,6 +11,4 @@ final case class Request(
 
 
 object Request:
-  case object Fx extends Reader[Request]
-  type Fx = Fx.type
-  export Fx.{ask, asks}
+  export RequestEffect.{ask, asks, handler}

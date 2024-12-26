@@ -1,10 +1,9 @@
 //> using scala "3.3.4"
-//> using dep "io.github.marcinzh::enterprise-core:0.5.0-SNAPSHOT"
+//> using dep "io.github.marcinzh::enterprise-core:0.6.0"
 package examples
 import turbolift.Extensions._
 import enterprise.{Response, Router, Status}
 import enterprise.DSL._
-import enterprise.server.Config
 import enterprise.server.Syntax._
 import enterprise.server.undertow.UndertowServer
 
@@ -24,6 +23,6 @@ http DELETE http://localhost:9000/admin
     case DELETE / "admin"    => Response(Status.Forbidden).pure_!!
   .handleWith(Router.handler)
   .serve
-  .handleWith(UndertowServer.toHandler)
-  .handleWith(Config.localhost(9000).toHandler)
+  .handleWith(UndertowServer.handler)
+  .handleWith(Config.localhost(9000).handler)
   .runIO

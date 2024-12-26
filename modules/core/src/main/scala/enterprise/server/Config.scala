@@ -1,21 +1,13 @@
 package enterprise.server
-import turbolift.{!!, Handler}
-import turbolift.Extensions._
-import turbolift.effects.{Reader, IO}
 
 
 final case class Config(
   port: Int,
   host: String,
 ):
-  def toHandler = Config.Fx.handler(this)
+  def handler = ConfigEffect.handler(this)
 
 
 object Config:
-  case object Fx extends Reader[Config]
-  type Fx = Fx.type
-  export Fx.{ask, asks}
-
   def localhost(port: Int): Config = Config(port, "localhost")
   def default = localhost(8080)
-  def askHandler: Handler[Identity, Identity, Fx, Any] !! Fx = Config.ask.map(Config.Fx.handler(_))

@@ -1,7 +1,6 @@
 package enterprise
 import turbolift.!!
 import enterprise.headers.ContentType
-import enterprise.effects.ErrorResponse
 
 
 final case class Response(
@@ -27,7 +26,7 @@ final case class Response(
   def putHeader(h: Header): Response = modHeaders(_.put(h))
   def addHeader(h: Header): Response = modHeaders(_.add(h))
 
-  def raise: Nothing !! ErrorResponse.Fx = ErrorResponse.Fx.raise(this)
+  def raise: Nothing !! ResponseError = ResponseError.raise(this)
 
 
 object Response:

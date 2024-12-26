@@ -14,53 +14,59 @@ Minimalist library for creating HTTP services, using algebraic effects and handl
 
 Services are defined as values of type:
 ```scala
-type MyHttpService = Response !! (Request.Fx & IO)
+type Service[U] = Response !! (RequestEffect & U)
 ````
-Which should be read as: "Computation, that **returns** `Response` and **requests 2 effects**: `Request.Fx` and `IO`".
+Which should be read as: "Computation, that **returns** `Response` and **requests effects**: `RequestEffect` and `U`".
+Where `U` means user selected set of effects involved in computing the response.
 
-`Request.Fx` is an instance of Turbolift's `Reader` effect, predefined in Enterprise.
+`RequestEffect` is an instance of Turbolift's `Reader` effect, predefined in Enterprise.
 
-Services can also request other effects than these 2. However, they must be handled (eliminated) by the user,
-before submitting the service to server. Multiple handlers can be chained, using Turbolift's `&&&!` operator.
+Examples of ptional effects, predefined in Enterprise, are:
+- `ResponseError` - An instance of Turbolift's `Error` effect. Allows interruption of processing of the request, returning given `Response` value. 
+- `RouterEffect` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to `<|>` of `Alternative`).
 
-Examples of such optional effects, predefined in Enterprise, are:
-- `ErrorResponse.Fx`- An instance of Turbolift's `Error` effect. Allows interruption of processing of the request, returning given `Response` value. 
-- `Router.Fx` - An instance of Turbolift's `Choice` effect. Allows defining routes by partial functions. Composition can be done with Turbolift's `++!` operator (similar to `<|>` of `Alternative`).
+Such effects can be handled at:
+- Request scope: before `.serve` call (i.e. once per each served request). 
+- Server scope: after `.serve` call (i.e. once per server launch).
 
-With future version of Turbolift, service will be able to use any number of effects that are handled outside the server scope.
+Multiple handlers can be chained, using Turbolift's `&&&!` operator.
 
 
 ## Example
 
 Run the server with `scala-cli`:
 
+> [!IMPORTANT]
+> Turbolift requires **Java 11** or newer.
+
 ```scala
 //> using scala "3.3.4"
-//> using dep "io.github.marcinzh::enterprise-core:0.5.0-SNAPSHOT"
+//> using dep "io.github.marcinzh::enterprise-core:0.6.0"
+package examples
 import turbolift.!!
 import turbolift.Extensions._
 import enterprise.{Response, Router}
-import enterprise.server.{Server, Config}
 import enterprise.DSL._
+import enterprise.server.Syntax._
+import enterprise.server.undertow.UndertowServer
 
 @main def main =
-  Server:
-    Router:
-      case GET / "sarcastic" / text =>
-        val text2 = text.zipWithIndex.map((c, i) => if i % 2 == 0 then c.toLower else c.toUpper).mkString
-        Response.text(text2).pure_!!
-    .handleWith:
-      Router.handler
-  .handleWith:
-    Server.undertow &&&!
-    Config.localhost(9000).toHandler
-  .unsafeRunST
+  Router:
+    case GET / "sarcastic" / text =>
+      val text2 = text.zipWithIndex.map((c, i) => if i % 2 == 0 then c.toLower else c.toUpper).mkString
+      Response.text(text2).pure_!!
+
+  .handleWith(Router.handler)
+  .serve
+  .handleWith(UndertowServer.handler)
+  .handleWith(Config.localhost(9000).handler)
+  .runIO
 ```
 
-Query the server with `httpie`:
+Query the server with `HTTPie`:
 
 ```bash
-http GET http://localhost:9000/sarcastic/assimilate
+http GET "http://localhost:9000/sarcastic/Resistance is futile"
 ```
 
 ---
