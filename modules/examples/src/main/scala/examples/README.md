@@ -1,6 +1,13 @@
 ## Examples
 
-Runnable with `scala-cli`.
+Runnable with `scala-cli` or from `sbt`:
+
+```sh
+sbt examples/run
+```
+
+> [!IMPORTANT]
+> Turbolift requires **Java 11** or newer.
 
 Source file | Description
 :---|:---
