@@ -41,7 +41,7 @@ Run the server with `scala-cli`:
 
 ```scala
 //> using scala "3.3.4"
-//> using dep "io.github.marcinzh::enterprise-core:0.6.0"
+//> using dep "io.github.marcinzh::enterprise-core:0.8.0"
 package examples
 import turbolift.!!
 import turbolift.Extensions._

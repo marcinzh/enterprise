@@ -1,7 +1,9 @@
+val ScalaLTS = "3.3.5"
+val ScalaNext = "3.6.4"
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.6.0"
-ThisBuild / scalaVersion := "3.3.4"
-ThisBuild / crossScalaVersions := Seq(scalaVersion.value)
+ThisBuild / version := "0.8.0"
+ThisBuild / scalaVersion := ScalaLTS
+ThisBuild / crossScalaVersions := Seq(ScalaLTS, ScalaNext)
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
@@ -9,7 +11,6 @@ ThisBuild / scalacOptions ++= Seq(
   "-unchecked",
   "-Wnonunit-statement",
   "-Xfatal-warnings",
-  "-Ykind-projector:underscores",
   Seq(
     "java.lang",
     "scala",
@@ -18,9 +19,18 @@ ThisBuild / scalacOptions ++= Seq(
   ).mkString("-Yimports:", ",", "")
 )
 
+ThisBuild / scalacOptions += {
+  if (VersionNumber(scalaVersion.value).matchesSemVer(SemanticSelector(">=3.4.0")))
+    "-Xkind-projector:underscores"
+  else
+    "-Ykind-projector:underscores"
+}
+ThisBuild / publish / skip := (scalaVersion.value != ScalaLTS)
+
+
 val Deps = {
-  val jsonitter_v = "2.32.0"
-  val tur_v = "0.104.0"
+  val jsonitter_v = "2.35.0"
+  val tur_v = "0.112.0"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.4.0" % "test"
     val turbolift_core = "io.github.marcinzh" %% "turbolift-core" % tur_v
@@ -45,7 +55,6 @@ lazy val core = project
   .settings(testSettings: _*)
   .settings(libraryDependencies ++= Seq(
     Deps.turbolift_core,
-    Deps.turbolift_bindless,
     Deps.undertow,
     Deps.jsoniter_core,
     Deps.jsoniter_macros,
@@ -56,6 +65,7 @@ lazy val examples = project
   .settings(name := "enterprise-examples")
   .settings(publish / skip := true)
   .settings(Compile / run / mainClass := Some("runner.Main"))
+  .settings(libraryDependencies += Deps.turbolift_bindless)
   .dependsOn(core)
 
 //=================================================
@@ -73,7 +83,7 @@ ThisBuild / description := "Serve HTTP using algebraic effects and handlers"
 ThisBuild / organizationName := "marcinzh"
 ThisBuild / homepage := Some(url("https://github.com/marcinzh/enterprise"))
 ThisBuild / scmInfo := Some(ScmInfo(url("https://github.com/marcinzh/enterprise"), "scm:git@github.com:marcinzh/enterprise.git"))
-ThisBuild / licenses := List("MIT" -> new URL("http://www.opensource.org/licenses/MIT"))
+ThisBuild / licenses := List("MIT" -> url("http://www.opensource.org/licenses/MIT"))
 ThisBuild / versionScheme := Some("semver-spec")
 ThisBuild / pomIncludeRepository := { _ => false }
 ThisBuild / publishMavenStyle := true
