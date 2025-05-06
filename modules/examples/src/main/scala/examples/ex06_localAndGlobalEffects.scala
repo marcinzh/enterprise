@@ -17,6 +17,7 @@ for i in {1..5}; do http GET http://localhost:9000; done
 
 @main def ex06_localAndGlobalEffects =
   case object Counter extends State[Int]
+
   `do`:
     val n = Counter.getModify(_ + 1).!
     if n % 2 == 0 then

@@ -4,12 +4,16 @@ import turbolift.Extensions._
 import turbolift.effects.ErrorEffect
 
 
-type ResponseError = ResponseError.type
-
-object ResponseError extends ErrorEffect[Response, Response]:
-  val handler: Handler[Const[Response], Const[Response], ResponseError, Any] =
+trait ResponseErrorEffect[U] extends ErrorEffect[Response[U], Response[U]]:
+  def handler: ThisHandler[Const[Response[U]], Const[Response[U]], Any] =
     handlers.first
-    .project[Response]
-    .mapK([_] => (e: Either[Response, Response]) => e.merge)
+    .project[Response[U]]
+    .mapK([_] => (e: Either[Response[U], Response[U]]) => e.merge)
 
   def raiseBadRequest(text: String) = raise(Response.badRequest(text))
+
+
+//// predefined instance of ResponseErrorEffect
+case object ResponseError extends ResponseErrorEffect[Any]
+
+type ResponseError = ResponseError.type

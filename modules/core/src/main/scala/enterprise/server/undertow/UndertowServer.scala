@@ -8,7 +8,7 @@ import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
 import turbolift.io.{Outcome, Warp, Loom}
-import enterprise.{Request, RequestEffect, Response, Service,  Method, Status, Header, Headers, Body}
+import enterprise.{Request, RequestIO, RequestEffect, Response, Service,  Method, Status, Header, Headers, Body}
 import enterprise.server.{Server, Config, ConfigEffect}
 
 
@@ -36,17 +36,17 @@ object UndertowServer extends Server:
         case Failure(e) => writeBadResponse(exchange, "Failed to inspect request", e)
         case Success(req) =>
           loom.unsafeSubmit:
-            IO.toTry(service.handleWith(RequestEffect.handler(req))).map:
+            IO.toTry(service.handleWith(RequestEffect.handler(req))).flatMap:
               case Success(rsp) => writeResponse(exchange, rsp)
-              case Failure(e) => writeBadResponse(exchange, "Failed to generate response", e)
+              case Failure(e) => IO(writeBadResponse(exchange, "Failed to generate response", e))
             .guarantee(IO(exchange.endExchange()))
 
-  private def readRequest(exchange: HttpServerExchange, body: Array[Byte]): Request =
+  private def readRequest(exchange: HttpServerExchange, body: Array[Byte]): RequestIO =
     Request(
       method = Method.parse(exchange.getRequestMethod.toString),
       path = exchange.getRequestPath,
       headers = readHeaders(exchange.getRequestHeaders),
-      body = Body(body),
+      body = Body.fromBytes(body),
     )
 
   private def writeBadResponse(exchange: HttpServerExchange, message: String, throwable: Throwable): Unit =
@@ -59,12 +59,17 @@ object UndertowServer extends Server:
       sw.toString
     exchange.getResponseSender.send(s"$message.\n\n$stackTrace")
 
-  private def writeResponse(exchange: HttpServerExchange, response: Response): Unit =
-    exchange.setStatusCode(response.status.value)
-    writeHeaders(exchange.getResponseHeaders, response.headers)
-    if response.body.bytes.nonEmpty then
-      val bb = java.nio.ByteBuffer.wrap(response.body.bytes)
-      exchange.getResponseSender.send(bb)
+  private def writeResponse[U](exchange: HttpServerExchange, response: Response[U]): Unit !! (U & IO) =
+    for
+      _ <- IO:
+        exchange.setStatusCode(response.status.value)
+        writeHeaders(exchange.getResponseHeaders, response.headers)
+      bytes <- response.body.toArray
+      _ <- IO:
+        if bytes.nonEmpty then
+          val bb = java.nio.ByteBuffer.wrap(bytes)
+          exchange.getResponseSender.send(bb)
+    yield ()
 
   private def readHeaders(hmap: HeaderMap): Headers =
     (for

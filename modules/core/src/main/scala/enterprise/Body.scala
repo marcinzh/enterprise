@@ -1,11 +1,12 @@
 package enterprise
+import java.nio.charset.StandardCharsets
+import beam.Stream
+import turbolift.effects.IO
 
 
-final case class Body(bytes: Array[Byte]):
-  override def toString: String = text
-  def text: String = new String(bytes)
-
+type Body[U] = Stream[Byte, U]
 
 object Body:
-  val empty: Body = Body(Array.empty[Byte])
-  def apply(value: String): Body = Body(value.getBytes)
+  val empty: Body[Any] = Stream.empty
+  def fromText(value: String): Body[Any] = Stream.from(value.getBytes(StandardCharsets.UTF_8))
+  def fromBytes(arr: Array[Byte]): Body[Any] = Stream.from(arr)

@@ -14,7 +14,7 @@ Minimalist library for creating HTTP services, using algebraic effects and handl
 
 Services are defined as values of type:
 ```scala
-type Service[U] = Response !! (RequestEffect & U)
+type Service[U] = Response[U] !! (RequestEffect & U)
 ````
 Which should be read as: "Computation, that **returns** `Response` and **requests effects**: `RequestEffect` and `U`".
 Where `U` means user selected set of effects involved in computing the response.

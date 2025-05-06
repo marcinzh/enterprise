@@ -1,13 +1,16 @@
 package enterprise
+import turbolift.effects.IO
 
 
-final case class Request(
+type RequestIO = Request[IO]
+
+final case class Request[-U](
   method: Method,
   path: String,
   headers: Headers,
-  body: Body,
+  body: Body[U],
 ):
-  override def toString = s"$method $path $body"
+  override def toString = s"$method $path"
 
 
 object Request:

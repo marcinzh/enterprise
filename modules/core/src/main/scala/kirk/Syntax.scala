@@ -1,25 +1,25 @@
 package kirk
 import com.github.plokhotnyuk.jsoniter_scala.core._
 import turbolift.!!
+import turbolift.effects.IO
 import turbolift.Extensions._
 import enterprise.{Response, Body}
  
 
 object Syntax:
-  extension (thiz: Body)
-    def json[T: JsonValueCodec]: T !! DecodingError =
-      try
-        readFromArray(thiz.bytes).pure_!!
-      catch
-        case e: JsonReaderException => DecodingError.raise(new DecodingException(e.getMessage))
-        case e: DecodingException => DecodingError.raise(e)
+  extension [U](thiz: Body[U])
+    def json[T: JsonValueCodec]: T !! (U & DecodingError & IO) =
+      thiz.toArray.flatMap: bytes =>
+        IO.catchSomeEff(IO(readFromArray(bytes))):
+          case e: JsonReaderException => DecodingError.raise(new DecodingException(e.getMessage))
+          case e: DecodingException => DecodingError.raise(e)
 
 
   extension (thiz: Body.type)
-    def json[T: JsonValueCodec](value: T): Body = Body(writeToArray(value))
+    def json[T: JsonValueCodec](value: T): Body[Any] = Body.fromBytes(writeToArray(value))
 
-  extension (thiz: Response)
-    def withJson[T: JsonValueCodec](value: T): Response = thiz.withJsonBody(Body.json(value))
+  extension (thiz: Response[?])
+    def withJson[T: JsonValueCodec](value: T): Response[Any] = thiz.withJsonBody(Body.json(value))
 
   extension (thiz: Response.type)
-    def json[T: JsonValueCodec](value: T): Response = Response.jsonBody(Body.json(value))
+    def json[T: JsonValueCodec](value: T): Response[Any] = Response.jsonBody(Body.json(value))

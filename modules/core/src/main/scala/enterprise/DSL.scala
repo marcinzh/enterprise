@@ -8,7 +8,7 @@ object DSL:
 
   export Method._
 
-  def apply(request: Request): DSL = apply(request.method, request.path)
+  def apply(request: Request[?]): DSL = apply(request.method, request.path)
 
   def apply(method: Method, path: String): DSL =
     assert(path.startsWith("/"))
