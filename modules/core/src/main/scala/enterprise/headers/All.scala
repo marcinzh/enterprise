@@ -6,4 +6,6 @@ val All: IArray[HeaderKey] = IArray(
   ContentType,
   ContentLength,
   UserAgent,
+  Cookie,
+  SetCookie,
 )

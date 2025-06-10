@@ -26,12 +26,18 @@ final case class Response[-U](
   def putHeader(h: Header): Response[U] = modHeaders(_.put(h))
   def addHeader(h: Header): Response[U] = modHeaders(_.add(h))
 
+  def getCookie(name: String): Option[ResponseCookie] = headers.getResponseCookie(name)
+  def addCookie(cookie: ResponseCookie): Response[U] = modHeaders(_.addResponseCookie(cookie))
+
   // def raise(using ev: U =:= Any): Nothing !! ResponseError = ResponseError.raise(cast[Any])
   // def cast[V](using ev: U =:= V): Response[V] = asInstanceOf[Response[V]]
 
 
 
+
 object Response:
+  val Ok: Response[Any] = text("")
+
   def apply[U](body: Body[U], mediaType: MediaType): Response[U] = 
     Response(
       status = Status.Ok,
