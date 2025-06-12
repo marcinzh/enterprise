@@ -11,5 +11,5 @@ object Router:
       case Some(x) => x
 
   //@#@ experimental
-  def lazily[U, V](f: PartialFunction[DSL, Response[V] !! U]): Option[Response[V] !! U] !! RequestEffect=
+  def lazily[U, V](f: PartialFunction[DSL, Response[V] !! U]): Option[Response[V] !! U] !! RequestEffect =
     Request.asks(r => f.lift(DSL(r)))
