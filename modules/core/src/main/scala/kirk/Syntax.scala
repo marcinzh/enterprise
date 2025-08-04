@@ -8,11 +8,11 @@ import enterprise.{Response, Body}
 
 object Syntax:
   extension [U](thiz: Body[U])
-    def json[T: JsonValueCodec]: T !! (U & DecodingError & IO) =
+    def json[T: JsonValueCodec]: T !! (U & JsonDecodingError & IO) =
       thiz.toArray.flatMap: bytes =>
         IO.catchSomeEff(IO(readFromArray(bytes))):
-          case e: JsonReaderException => DecodingError.raise(new DecodingException(e.getMessage))
-          case e: DecodingException => DecodingError.raise(e)
+          case e: JsonReaderException => JsonDecodingError.raise(new JsonDecodingException(e.getMessage))
+          case e: JsonDecodingException => JsonDecodingError.raise(e)
 
 
   extension (thiz: Body.type)

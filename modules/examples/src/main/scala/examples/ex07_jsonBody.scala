@@ -39,7 +39,7 @@ http GET http://localhost:9000/decode name=Adam age:=42
 
   .handleWith(Router.handler)
   .handleWith(ResponseError.handler)
-  .handleWith(DecodingError.badRequest)
+  .handleWith(JsonDecodingError.badRequest)
   .serve
   .handleWith(UndertowServer.handler)
   .handleWith(Config.localhost(9000).handler)
