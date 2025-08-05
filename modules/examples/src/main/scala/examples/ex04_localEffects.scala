@@ -1,6 +1,6 @@
-//> using scala "3.3.4"
+//> using scala "3.3.6"
 //> using dep "io.github.marcinzh::enterprise-core:0.8.0"
-//> using dep "io.github.marcinzh::turbolift-bindless:0.112.0"
+//> using dep "io.github.marcinzh::turbolift-bindless:0.118.0"
 package examples
 import turbolift.bindless._
 import turbolift.effects.{Random, IO}
@@ -25,7 +25,7 @@ for i in {1..3}; do http POST http://localhost:9000/sleep/1000 & done; wait
 
     case POST / "sleep" / millisRaw =>
       `do`:
-        val millis = ResponseError.fromOption(millisRaw.toIntOption)(Response(Status.BadRequest)).!
+        val millis = ResponseError.raiseFromOption(millisRaw.toIntOption)(Response(Status.BadRequest)).!
         IO.sleep(millis).!
         Response.text(s"Slept ${millis}ms\n")
 

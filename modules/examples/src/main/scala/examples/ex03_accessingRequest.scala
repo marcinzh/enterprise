@@ -1,6 +1,6 @@
-//> using scala "3.3.4"
+//> using scala "3.3.6"
 //> using dep "io.github.marcinzh::enterprise-core:0.8.0"
-//> using dep "io.github.marcinzh::turbolift-bindless:0.112.0"
+//> using dep "io.github.marcinzh::turbolift-bindless:0.118.0"
 package examples
 import turbolift.bindless._
 import enterprise.{Request, Response, Router, Status}

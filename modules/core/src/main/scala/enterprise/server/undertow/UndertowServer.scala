@@ -7,7 +7,8 @@ import io.undertow.util.{HeaderMap, HttpString, SameThreadExecutor}
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
 import turbolift.effects.IO
-import turbolift.io.{Outcome, Warp, Loom}
+import turbolift.io.{Warp, Loom}
+import turbolift.data.Outcome
 import enterprise.{Request, RequestIO, RequestEffect, Response, Service,  Method, Status, Header, Headers, Body}
 import enterprise.server.{Server, Config, ConfigEffect}
 
@@ -36,7 +37,7 @@ object UndertowServer extends Server:
         case Failure(e) => writeBadResponse(exchange, "Failed to inspect request", e)
         case Success(req) =>
           loom.unsafeSubmit:
-            IO.toTry(service.handleWith(RequestEffect.handler(req))).flatMap:
+            IO.catchToTry(service.handleWith(RequestEffect.handler(req))).flatMap:
               case Success(rsp) => writeResponse(exchange, rsp)
               case Failure(e) => IO(writeBadResponse(exchange, "Failed to generate response", e))
             .guarantee(IO(exchange.endExchange()))

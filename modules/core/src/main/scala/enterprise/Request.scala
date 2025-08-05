@@ -21,4 +21,5 @@ final case class Request[-U](
   def cookies: Map[String, RequestCookie] = headers.cookies
 
 object Request:
-  export RequestEffect.{ask, asks, asksEff, handler}
+  export RequestEffect.{ask, asks, asksEff}
+  export RequestEffect.handlers.{default => handler}
