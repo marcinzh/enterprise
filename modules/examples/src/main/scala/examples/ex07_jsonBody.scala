@@ -26,7 +26,7 @@ http GET http://localhost:9000/decode name=Adam age:=42
     case GET / "encode" / name / rawAge =>
       def invalidAge(cause: String) = Response(Status.BadRequest).withText(s"Invalid age: `$rawAge`. Cause: $cause.")
       `do`:
-        val age = ResponseError.raiseFromOption(rawAge.toIntOption)(invalidAge("not an integer")).!
+        val age = ResponseError.fromOption(rawAge.toIntOption)(invalidAge("not an integer")).!
         if age < 0 then ResponseError.raise(invalidAge("must not be negative")).!
         val person = Person(name, age)
         Response.json(person)

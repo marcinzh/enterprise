@@ -1,19 +1,15 @@
 package enterprise
 import turbolift.{!!, Handler}
 import turbolift.Extensions._
-import turbolift.effects.ErrorEffect
+import turbolift.effects.PolyErrorEffect
 
 
-trait ResponseErrorEffect[U] extends ErrorEffect[Response[U]]:
-  def handler: ThisHandler[Const[Response[U]], Const[Response[U]], Any] =
-    handlers.first
+type ResponseError = ResponseError.type
+
+case object ResponseError extends PolyErrorEffect:
+  def handler[U]: Handler[Const[Response[U]], Const[Response[U]], @@[Response[U]], Any] =
+    handlers.default
     .project[Response[U]]
     .mapK([_] => (e: Either[Response[U], Response[U]]) => e.merge)
 
-  def raiseBadRequest(text: String) = raise(Response.badRequest(text))
-
-
-//// predefined instance of ResponseErrorEffect
-case object ResponseError extends ResponseErrorEffect[Any]
-
-type ResponseError = ResponseError.type
+  def raiseBadRequest(text: String): Nothing !! @@[Response[Any]] = raise(Response.badRequest(text))

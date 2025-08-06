@@ -25,7 +25,7 @@ for i in {1..3}; do http POST http://localhost:9000/sleep/1000 & done; wait
 
     case POST / "sleep" / millisRaw =>
       `do`:
-        val millis = ResponseError.raiseFromOption(millisRaw.toIntOption)(Response(Status.BadRequest)).!
+        val millis = ResponseError.fromOption(millisRaw.toIntOption)(Response(Status.BadRequest)).!
         IO.sleep(millis).!
         Response.text(s"Slept ${millis}ms\n")
 
