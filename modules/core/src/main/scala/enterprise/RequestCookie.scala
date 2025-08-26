@@ -11,4 +11,4 @@ object RequestCookie:
       case RX(name, content) => Some(RequestCookie(name, content))
       case _ => None
 
-  private val RX = " *([^=])=(.*)".r
+  private val RX = """^\s*([^=]+)\s*=\s*(.*)\s*$""".r

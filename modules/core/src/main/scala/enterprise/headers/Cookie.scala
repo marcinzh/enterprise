@@ -5,7 +5,7 @@ import enterprise.RequestCookie
 
 
 final case class Cookie(cookies: List[RequestCookie]) extends Constructor[Cookie](Cookie):
-  override def renderValue: String = cookies.iterator.map(_.render).mkString(";")
+  override def renderValue: String = cookies.iterator.map(_.render).mkString("; ")
 
 
 case object Cookie extends Companion[Cookie]:
