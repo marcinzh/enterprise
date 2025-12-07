@@ -1,7 +1,7 @@
-val ScalaLTS = "3.3.6"
-val ScalaNext = "3.7.2"
+val ScalaLTS = "3.3.7"
+val ScalaNext = "3.7.4"
 ThisBuild / organization := "io.github.marcinzh"
-ThisBuild / version := "0.11.0-SNAPSHOT"
+ThisBuild / version := "0.12.0"
 ThisBuild / scalaVersion := ScalaLTS
 ThisBuild / crossScalaVersions := Seq(ScalaLTS, ScalaNext)
 
@@ -29,13 +29,13 @@ ThisBuild / publish / skip := (scalaVersion.value != ScalaLTS)
 
 
 val Deps = {
-  val jsonitter_v = "2.35.0"
-  val tur_v = "0.118.0"
+  val jsonitter_v = "2.38.5"
+  val tur_v = "0.124.0"
   object deps {
     val specs2_core = "org.specs2" %% "specs2-core" % "5.4.0" % "test"
     val turbolift_core = "io.github.marcinzh" %% "turbolift-core" % tur_v
     val turbolift_bindless = "io.github.marcinzh" %% "turbolift-bindless" % tur_v
-    val beam = "io.github.marcinzh" %% "beam-core" % "0.18.0"
+    val beam = "io.github.marcinzh" %% "beam-core" % "0.20.0"
     val betterFiles = ("com.github.pathikrit" %% "better-files" % "3.9.1").cross(CrossVersion.for3Use2_13)
     val undertow = "io.undertow" % "undertow-core" % "2.2.20.Final"
     val jsoniter_core ="com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core" % jsonitter_v

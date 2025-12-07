@@ -1,6 +1,6 @@
-//> using scala "3.3.6"
-//> using dep "io.github.marcinzh::enterprise-core:0.10.0"
-//> using dep "io.github.marcinzh::turbolift-bindless:0.118.0"
+//> using scala "3.3.7"
+//> using dep "io.github.marcinzh::enterprise-core:0.12.0"
+//> using dep "io.github.marcinzh::turbolift-bindless:0.124.0"
 package examples
 import turbolift.bindless._
 import enterprise.{Request, Response, Router, Status, ResponseError}
@@ -26,7 +26,7 @@ http GET http://localhost:9000/decode name=Adam age:=42
     case GET / "encode" / name / rawAge =>
       def invalidAge(cause: String) = Response(Status.BadRequest).withText(s"Invalid age: `$rawAge`. Cause: $cause.")
       `do`:
-        val age = ResponseError.fromOption(rawAge.toIntOption)(invalidAge("not an integer")).!
+        val age = ResponseError.raiseFromOption(rawAge.toIntOption)(invalidAge("not an integer")).!
         if age < 0 then ResponseError.raise(invalidAge("must not be negative")).!
         val person = Person(name, age)
         Response.json(person)
